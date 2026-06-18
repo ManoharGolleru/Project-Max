@@ -1,0 +1,2 @@
+[console_scripts]
+agentctl = agent_harness.cli:main

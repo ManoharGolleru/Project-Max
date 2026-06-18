@@ -1,0 +1,9 @@
+{
+  "goal": "Inspect workspace contents",
+  "steps": [
+    "List directory contents"
+  ],
+  "next_action": "Run file listing command",
+  "suggested_command": "ls -lh /home/heavenlyemperor/agent-harness/test-project/workspace",
+  "reason": "Lists files and permissions safely without modification"
+}

@@ -1,0 +1,7 @@
+{
+  "model": "hf.co/unsloth/Qwen3.5-4B-GGUF:Q4_K_M",
+  "context": 8192,
+  "temperature": 0.2,
+  "ram_limit_gb": 10,
+  "approval_mode": "prompt"
+}

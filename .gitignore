@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# Local model/runtime files
+*.log
+
+# Max generated backups and runtime artifacts
+patch_backup_*/
+test-project/.max/*history*.jsonl
+test-project/.max/audit-export-*.json
+test-project/.max/project-notes.jsonl
+test-project/.max/file-summaries.json
+test-project/workspace/downloads/
+test-project/workspace/browser-artifacts/
+test-project/workspace/research-notes/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

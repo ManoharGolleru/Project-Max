@@ -1,0 +1,18 @@
+{
+  "allow_browser": true,
+  "allow_downloads": true,
+  "allow_network": true,
+  "browser": {
+    "headless": true,
+    "timeout_sec": 30
+  },
+  "history": {
+    "max_items": 100
+  },
+  "internet": {
+    "allowed_domains": [],
+    "blocked_domains": [],
+    "max_bytes": 1000000
+  },
+  "workspace": "workspace"
+}
