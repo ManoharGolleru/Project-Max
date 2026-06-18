@@ -524,3 +524,30 @@ safe-run result:
   "stdout": "5.0 + 4.0 = 9.0\n",
   "stderr": ""
 }
+
+## 2026-06-18T14:20:48-0400
+
+Max applied change:
+
+{
+  "summary": "Add missing multiply command to calc2.py by adding multiply function and CLI parser",
+  "files": [
+    "workspace/calc2.py"
+  ]
+}
+
+## 2026-06-18T14:20:56-0400
+
+Max post-change test result:
+
+{
+  "ok": false,
+  "blocked": false,
+  "timestamp": "2026-06-18T14:20:56-0400",
+  "command": "python3 calc2.py multiply 2 3",
+  "cwd": "/home/heavenlyemperor/agent-harness/test-project/workspace",
+  "exit_code": 2,
+  "duration_sec": 0.026,
+  "stdout": "",
+  "stderr": "usage: calc2.py [-h] {add,subtract} ...\ncalc2.py: error: argument command: invalid choice: 'multiply' (choose from 'add', 'subtract')\n"
+}

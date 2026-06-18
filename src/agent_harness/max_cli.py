@@ -20,6 +20,7 @@ from .notes_flow import notes_project as direct_notes_project
 from .audit_flow import audit_project as direct_audit_project
 from .workspace_flow import workspace_project as direct_workspace_project
 from .test_flow import test_project as direct_test_project
+from .power_flow import power_context_project as direct_power_context_project, power_tasks_project as direct_power_tasks_project, power_fix_project as direct_power_fix_project, power_task_project as direct_power_task_project
 from .project_commands import (
     delete_project as pm_delete_project,
     forget_project as pm_forget_project,
@@ -359,6 +360,14 @@ COMMANDS = {
         "agentctl": ["doctor"],
         "needs_project": False,
     },
+    "tasks": {
+        "aliases": ["task-history"],
+        "summary": "Show task history.",
+        "usage": "max tasks [list|last|show|search|path]",
+        "agentctl": None,
+        "needs_project": True,
+        "remainder": True,
+    },
     "test": {
         "aliases": ["self-test", "verify"],
         "summary": "Run Max integration tests.",
@@ -617,6 +626,8 @@ def print_home() -> None:
         ("max audit", "Show unified project timeline"),
         ("max shell", "Open a shell inside the active workspace"),
         ("max test calc2.py add 5 3", "Run a workspace test command"),
+        ("max context --for \"task\"", "Build a rich model context"),
+        ("max task \"request\"", "Run contextual task loop"),
         ("max info", "Show project/model info instantly"),
         ("max status", "Show project dashboard"),
         ("max do ls -lh .", "Run a safe command with approval/checks"),
@@ -654,7 +665,7 @@ def print_help() -> None:
     ui.header("Max command guide", "Small command set, natural aliases, advanced backend hidden behind max raw.")
 
     groups = [
-        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "workspace", "shell", "test", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
+        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "workspace", "shell", "test", "tasks", "context", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
         ("Setup", ["projects", "skills", "new", "use", "where", "current", "delete", "forget", "rename", "setup", "config"]),
         ("Checks", ["check", "test", "model", "long", "logs", "unload"]),
         ("Memory", ["memory", "last", "sessions", "session"]),
@@ -1115,6 +1126,44 @@ def _direct_test(args: list[str]) -> int:
     return direct_test_project(project, rest)
 
 
+
+
+def _direct_power_context(args: list[str]) -> int:
+    project, rest = _direct_project_and_rest(args)
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_power_context_project(project, rest)
+
+
+def _direct_power_tasks(args: list[str]) -> int:
+    project, rest = _direct_project_and_rest(args)
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_power_tasks_project(project, rest)
+
+
+def _direct_power_fix(args: list[str]) -> int:
+    project, rest = _direct_project_and_rest(args)
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_power_fix_project(project, rest)
+
+
+def _direct_power_task(args: list[str]) -> int:
+    project, rest = _direct_project_and_rest(args)
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_power_task_project(project, rest)
+
+
 def main(argv: list[str] | None = None) -> int:
     ensure_app_home()
 
@@ -1124,6 +1173,18 @@ def main(argv: list[str] | None = None) -> int:
     if not argv:
         print_home()
         return 0
+
+    if argv and argv[0] in {"context", "content"}:
+        return _direct_power_context(argv[1:])
+
+    if argv and argv[0] in {"tasks", "task-history"}:
+        return _direct_power_tasks(argv[1:])
+
+    if argv and argv[0] in {"fix", "repair"}:
+        return _direct_power_fix(argv[1:])
+
+    if argv and argv[0] in {"task"}:
+        return _direct_power_task(argv[1:])
 
     if argv and argv[0] in {"test", "check"}:
         return _direct_test(argv[1:])
@@ -1153,16 +1214,16 @@ def main(argv: list[str] | None = None) -> int:
         return _direct_plan(argv[1:])
 
     if argv and argv[0] in {"task", "build", "work"}:
-        return _direct_task(argv[1:])
+        return _direct_power_task(argv[1:])
 
     if argv and argv[0] in {"fix", "repair"}:
-        return _direct_fix(argv[1:])
+        return _direct_power_fix(argv[1:])
 
     if argv and argv[0] in {"index"}:
         return _direct_index(argv[1:])
 
     if argv and argv[0] in {"context", "content"}:
-        return _direct_context(argv[1:])
+        return _direct_power_context(argv[1:])
 
 
     # Friendly behavior: max . opens/uses current project.

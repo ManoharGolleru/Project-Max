@@ -226,6 +226,17 @@
       "duration_sec": 0.029,
       "stdout": "5.0 + 4.0 = 9.0\n",
       "stderr": ""
+    },
+    {
+      "ok": false,
+      "blocked": false,
+      "timestamp": "2026-06-18T14:20:56-0400",
+      "command": "python3 calc2.py multiply 2 3",
+      "cwd": "/home/heavenlyemperor/agent-harness/test-project/workspace",
+      "exit_code": 2,
+      "duration_sec": 0.026,
+      "stdout": "",
+      "stderr": "usage: calc2.py [-h] {add,subtract} ...\ncalc2.py: error: argument command: invalid choice: 'multiply' (choose from 'add', 'subtract')\n"
     }
   ]
 }
