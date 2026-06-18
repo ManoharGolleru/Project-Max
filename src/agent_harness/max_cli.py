@@ -18,6 +18,7 @@ from .browser_flow import browser_project as direct_browser_project
 from .research_flow import research_project as direct_research_project
 from .notes_flow import notes_project as direct_notes_project
 from .audit_flow import audit_project as direct_audit_project
+from .workspace_flow import workspace_project as direct_workspace_project
 from .project_commands import (
     delete_project as pm_delete_project,
     forget_project as pm_forget_project,
@@ -133,6 +134,38 @@ COMMANDS = {
         "agentctl": ["tree"],
         "needs_project": True,
         "pass_args": True,
+    },
+    "workspace": {
+        "aliases": ["where"],
+        "summary": "Show workspace info, path, files, or tree.",
+        "usage": "max workspace [path|files|tree]",
+        "agentctl": None,
+        "needs_project": True,
+        "remainder": True,
+    },
+    "shell": {
+        "aliases": [],
+        "summary": "Open a shell inside the active workspace.",
+        "usage": "max shell",
+        "agentctl": None,
+        "needs_project": True,
+        "remainder": True,
+    },
+    "pwd": {
+        "aliases": [],
+        "summary": "Print the active workspace path.",
+        "usage": "max pwd",
+        "agentctl": None,
+        "needs_project": True,
+        "remainder": True,
+    },
+    "cd": {
+        "aliases": [],
+        "summary": "Print a cd command for the active workspace.",
+        "usage": "max cd",
+        "agentctl": None,
+        "needs_project": True,
+        "remainder": True,
     },
     "audit": {
         "aliases": ["timeline"],
@@ -581,6 +614,7 @@ def print_home() -> None:
         ("max research \"python argparse examples\"", "Collect sources into research notes"),
         ("max notes summarize calc2.py", "Save a lightweight file summary"),
         ("max audit", "Show unified project timeline"),
+        ("max shell", "Open a shell inside the active workspace"),
         ("max info", "Show project/model info instantly"),
         ("max status", "Show project dashboard"),
         ("max do ls -lh .", "Run a safe command with approval/checks"),
@@ -618,7 +652,7 @@ def print_help() -> None:
     ui.header("Max command guide", "Small command set, natural aliases, advanced backend hidden behind max raw.")
 
     groups = [
-        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
+        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "workspace", "shell", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
         ("Setup", ["projects", "skills", "new", "use", "where", "current", "delete", "forget", "rename", "setup", "config"]),
         ("Checks", ["check", "test", "model", "long", "logs", "unload"]),
         ("Memory", ["memory", "last", "sessions", "session"]),
@@ -1054,6 +1088,20 @@ def _direct_audit(args: list[str]) -> int:
     return direct_audit_project(project, rest)
 
 
+
+
+def _direct_workspace(args: list[str]) -> int:
+    if not args:
+        args = ["workspace"]
+    command = args[0]
+    project, rest = _direct_project_and_rest(args[1:])
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_workspace_project(project, [command] + rest)
+
+
 def main(argv: list[str] | None = None) -> int:
     ensure_app_home()
 
@@ -1063,6 +1111,9 @@ def main(argv: list[str] | None = None) -> int:
     if not argv:
         print_home()
         return 0
+
+    if argv and argv[0] in {"workspace", "where", "pwd", "cd", "shell"}:
+        return _direct_workspace(argv)
 
     if argv and argv[0] in {"audit", "timeline"}:
         return _direct_audit(argv[1:])
