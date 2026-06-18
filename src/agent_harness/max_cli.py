@@ -19,6 +19,7 @@ from .research_flow import research_project as direct_research_project
 from .notes_flow import notes_project as direct_notes_project
 from .audit_flow import audit_project as direct_audit_project
 from .workspace_flow import workspace_project as direct_workspace_project
+from .test_flow import test_project as direct_test_project
 from .project_commands import (
     delete_project as pm_delete_project,
     forget_project as pm_forget_project,
@@ -615,6 +616,7 @@ def print_home() -> None:
         ("max notes summarize calc2.py", "Save a lightweight file summary"),
         ("max audit", "Show unified project timeline"),
         ("max shell", "Open a shell inside the active workspace"),
+        ("max test calc2.py add 5 3", "Run a workspace test command"),
         ("max info", "Show project/model info instantly"),
         ("max status", "Show project dashboard"),
         ("max do ls -lh .", "Run a safe command with approval/checks"),
@@ -652,7 +654,7 @@ def print_help() -> None:
     ui.header("Max command guide", "Small command set, natural aliases, advanced backend hidden behind max raw.")
 
     groups = [
-        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "workspace", "shell", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
+        ("Daily", ["start", "ask", "think", "files", "tree", "read", "search", "web", "browser", "research", "notes", "audit", "workspace", "shell", "test", "index", "context", "plan", "task", "fix", "info", "status", "do", "run", "change", "diff", "checkpoint", "look", "open"]),
         ("Setup", ["projects", "skills", "new", "use", "where", "current", "delete", "forget", "rename", "setup", "config"]),
         ("Checks", ["check", "test", "model", "long", "logs", "unload"]),
         ("Memory", ["memory", "last", "sessions", "session"]),
@@ -1102,6 +1104,17 @@ def _direct_workspace(args: list[str]) -> int:
     return direct_workspace_project(project, [command] + rest)
 
 
+
+
+def _direct_test(args: list[str]) -> int:
+    project, rest = _direct_project_and_rest(args)
+    if project is None:
+        ui.fail("No project selected.")
+        print("Use: max use <project> or max new <project>")
+        return 2
+    return direct_test_project(project, rest)
+
+
 def main(argv: list[str] | None = None) -> int:
     ensure_app_home()
 
@@ -1111,6 +1124,9 @@ def main(argv: list[str] | None = None) -> int:
     if not argv:
         print_home()
         return 0
+
+    if argv and argv[0] in {"test", "check"}:
+        return _direct_test(argv[1:])
 
     if argv and argv[0] in {"workspace", "where", "pwd", "cd", "shell"}:
         return _direct_workspace(argv)

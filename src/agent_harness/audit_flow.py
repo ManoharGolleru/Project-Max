@@ -10,6 +10,7 @@ from .project_settings import ensure_project_config, load_project_config, projec
 
 
 HISTORY_FILES = {
+    "test": "test-history.jsonl",
     "web": "web-history.jsonl",
     "browser": "browser-history.jsonl",
     "research": "research-history.jsonl",
@@ -94,6 +95,11 @@ def _shorten(text: str, limit: int = 120) -> str:
 
 
 def _event_title(source: str, record: dict[str, Any]) -> str:
+    if source == "test":
+        command = " ".join(str(part) for part in record.get("command", []))
+        exit_code = record.get("exit_code", "")
+        return f"test exit={exit_code} {command}".strip()
+
     if source == "web":
         op = record.get("op", "web")
         url = record.get("url", "")
